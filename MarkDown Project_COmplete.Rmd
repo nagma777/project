@@ -1,0 +1,231 @@
+---
+title: "RProject"
+author: "Nagma Pokharel"
+date: "4/28/2020"
+output: word_document
+bibliography: references.bib
+link-citations: yes
+---
+
+
+## **Summary**
+
+The researcher tries to address if there is a real difference in the math score between male and female. This is important to know because there is various theories and belief that females can outperform in reading score better while males can outperform in math. This also might be due to various socio-cultural factor. The researcher would like to check whether there is difference between the math and reading score of both male and female.Male compared to female have different priorities when they choose their career which is also a reason why some researchers claim male being more effective in maths score in exmas.  
+
+The following would be the research question that the researcher would like to ask:  
+  
+1.	What are the average number of male and female math score?  
+  
+2.	Show if it is possible to test the differences using another dependable variable?  
+  
+3.	Do the math and reading scores differ according to gender? If yes/ no, why?
+  
+The researcher believes that females are more proficient in reading condition while males are more proficient in math. The researcher mentions such comment because there has been theoretical evidences and news on this problem. Hence, the researcher would like to purpose that the mean of math score is different between male and female. 
+
+The researcher found their data in Kaggle.com. The analysis of data was with first being approaching the data. Second analyzing categorical and numerical values. Third, finding data types, outliers and missing values. The researcher also analyzed the data and discovered various methods to find the accuracy in the results from the data. 
+
+The basic findings of the data is that the researcher’s assumption was right. Based on the gender, male score better than female in math exam while female score better in reading exam compared to that with male.
+Based on the researcher’s finding., researcher would like to recommend that ………………
+
+# Introduction
+
+The researcher explains the problem of this research to be finding the difference between math and reading scores in both males and females. I would like to find out if there are certain differences in the score as males are more into technical subjects and females are in theoretical. The researcher does not aim to find anything associated with the score but only aims to compare how does the difference between males and females differs and what could be the reason. The math and reading score could also differ with the preparation the students might have made. However, it is also about how many students have registered. My data set involves 482 males and 518 females. The researcher also aims to find if the math score of female/male is low, why is so?
+
+The researcher views the importance of this problem to measure the independent variables like gender, race/ethnicity and parental level of education to determine the dependable variable i.e. math. The researcher would also like to go ahead and develop two hypotheses one involving math score and the other involving the reading score. With the availability, the researcher aims to check what is the reason for the score increment in both males and females. 
+
+
+# Literature review
+
+
+Education has been the most important discipline in human life. Race and ethnicity have also been important to determine how gender differs the score of math and reading. 
+
+Some researches show that males are more adaptable on most measures of quantitative and visuospatial ability and the reason behind it reasons why males are often more variable remain obscure which is still a problem in the world. Good careers in math require many types of cognitive abilities while various socio-cultural forces also contribute to the results. 
+
+However, due to more awareness, we can see changes in the society but still we yet to see the data which could determine whether female outstands in reading test and math test or vice versa. 
+
+
+# Theory
+The researcher would like to analyze two hypotheses where one involves writing as a dependent variable and the other involves reading as a dependent variable.
+
+Hypothesis number 1:
+
+H0: µ0: The mean math score of male and female are not different from each other. 
+
+H1: µ1:  The mean math score of male and female are different from each other.
+
+Hypothesis number 2: 
+
+H0: µ0: The mean reading score of male and female are not different from each other. 
+
+H1: µ1:  The mean reading score of male and female are different from each other.
+
+# Data
+ 
+
+## R Markdown
+```{r setup, include=TRUE, message=FALSE}
+library(stringr)
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+library(readr)
+library(mltools)
+library(data.table)
+```
+
+###### Response variable is math.score
+
+###### Read Data
+```{r include=TRUE}
+sp = read.csv('C:/Users/nagma/Desktop/Rproject/StudentsPerformance.csv')
+head(sp)
+```
+
+###### number of rows in sp
+###### number of columns in sp
+```{r include=TRUE}
+len_cols = length(names(sp))
+print(c("number of rows:", nrow(sp)))
+print(c("number of columns:", len_cols))
+head(sp)
+```
+
+Response variable has NA values, remove the data when response variables have na values
+```{r include=TRUE, message=FALSE}
+sp = sp[!is.na(sp$math.score),]
+print(c("number of rows:", nrow(sp)))
+```
+
+###### Fill na values for Reading score by using median values for Male and Female
+
+###### median of female reading score
+```{r include=TRUE, message=FALSE}
+med_female_rs = median(sp$reading.score[sp$gender=='female'],na.rm=TRUE)
+```
+###### median for male reading score
+```{r include=TRUE, message=FALSE}
+med_male_rs = median(sp$reading.score[sp$gender=='male'], na.rm=TRUE)
+
+sp$reading.score[is.na(sp$reading.score) & (sp$gender == "female")] <-med_female_rs
+sp$reading.score[is.na(sp$reading.score) & (sp$gender == "male")] <-med_male_rs
+```
+# Do the same for the writing Score
+```{r include=TRUE, message=FALSE}
+med_female_ws = median(sp$writing.score[sp$gender=='female'],na.rm=TRUE)
+```
+###### median for male reading score
+```{r include=TRUE, message=FALSE}
+med_male_ws = median(sp$writing.score[sp$gender=='male'], na.rm=TRUE)
+
+sp$writing.score[is.na(sp$writing.score) & (sp$gender == "female")] <-med_female_ws
+sp$writing.score[is.na(sp$writing.score) & (sp$gender == "male")] <-med_male_ws
+```
+
+
+###### check if there is a difference of mean between girls and boys math score
+```{r include=TRUE, message=FALSE}
+gend <- sp%>% select(gender, math.score)
+gend <- gend %>% group_by(gender) %>% summarise_all(mean)
+gend <- data.frame(gend)
+d <- melt(gend)
+ggplot(data = d,mapping = aes(x = gender, 
+                              y = value, fill = variable)) + 
+  geom_col(position = position_dodge())
+```
+
+###### check if the difference betwween the mean of math.score is significant
+```{r include=TRUE, message=FALSE}
+t.test(math.score ~ gender, data = sp, paired = FALSE)
+```
+###### p-value is much less than 0.05, hence the different statistically significant
+
+###### check if there is a difference of mean between girls and boys reading score
+```{r include=TRUE, message=FALSE}
+gend <- sp%>% select(gender, reading.score)
+gend <- gend %>% group_by(gender) %>% summarise_all(mean)
+gend <- data.frame(gend)
+d <- melt(gend)
+ggplot(data = d,mapping = aes(x = gender, 
+                              y = value, fill = variable)) + 
+  geom_col(position = position_dodge())
+```
+###### check if the difference betwween the mean of reading.scoreis significant
+```{r include=TRUE, message=FALSE}
+t.test(reading.score ~ gender, data = sp, paired = FALSE)
+```
+###### p-value is much less than 0.05, hence the different statistically significant
+
+
+
+###### One hot encode the categorical variables for mOdeling in R
+```{r include=TRUE, message=FALSE}
+table_sp <- one_hot(data.table(sp), dropCols = TRUE)
+```
+###### Convert back to data frame 
+```{r include=TRUE, message=FALSE}
+sp = data.frame(table_sp)
+```
+###### Print the correlation between all the variables with the response variable
+```{r include=TRUE, message=FALSE}
+for (i in names(sp)){
+  correlation_res <- cor(sp[[i]], sp$math.score)
+  print(c("corr with respose of", i, correlation_res))
+}
+```
+###### Build a simple regression model
+```{r include=TRUE, message=FALSE}
+linearMod <- lm(math.score ~ ., sp)
+print(summary(linearMod))
+```
+###### get all dependent variables
+```{r include=TRUE, message=FALSE}
+sp_dependent <- sp
+sp_dependent$math.score <- NULL
+predicted <- predict(linearMod, sp_dependent)
+
+print(c("correlation between predicted and actual:", cor(predicted, sp$math.score)))
+```
+###### Plot actual vs predicted
+```{r include=TRUE, message=FALSE}
+plot(sp$math.score, predicted)
+abline(lm(sp$math.score~predicted))
+```         
+# Methodology and Results
+
+
+The researcher used various techniques to analyze the data. First, the researcher checked whether there as a difference of mean between male and female math score. The researcher used ggplot to plot the data and see the differences. The mean math score for female is 63.63 whereas, the same for the male is 68.72. This shows a huge difference and disagrees with the hypothesis that the mean math score for both male and female is the same. Hence, we reject the null hypothesis (hypothesis number 1) and go along the alternative hypothesis.   
+  
+In addition to that, the researcher also worked with the reading data and found that the mean reading score is 72.60 for female while its 65.47 for male. This also proves that the mean reading score of male and female is different from each other. Here, we reject the null hypothesis (hypothesis number 2) and go with the alternative hypothesis.  
+
+## t-test
+
+The researcher performs t-test to check if the difference between the mean of reading score is significant. With the analysis, the researcher finds out that the t score is -5.398, degree of freedom (df) is 997.98 and the p-value is 0.001 with 95% confidence interval.Hence, the p value is less than 0.05 here we reject null hypothesis and proves that researcher’s finding is significance.   
+
+
+The researcher performs t-test to check if the difference between the mean of reading score is significant. It also means the true difference is greater than or less than 0. With the analysis, the researcher finds out that the t score is 7.9684, degree of freedom (df) is 996.36 and the p-value is 0.001 with 95% confidence interval. Hence, the p value is less than 0.05 here we reject null hypothesis and proves that researcher’s finding is significance. 
+
+## Correlation and Simple Linear Regression
+
+Correlation and simple linear regression
+The researcher took a further step to find the correlation between the dependent variable (math score) with other independent variables where the independent variables are both numerical and categorical.   
+
+In addition to above, the researcher conducted a simple linear regression model. The analysis shows that the residual standard error is 5.362 on 985 degree of freedom (df) with R- squared of 0.8767 and adjusted R-squared of 0.875. The simple linear regression model shows the f-statistics to be 500.3 and the p- value less than 0.0001.   
+
+# Implications
+
+The researcher has found that the mean difference between the male and female in their math score and reading score is difference because of various factor including different value priorities, working situations where male tend to enjoy more working with things while female like to work with people around, problem solving strategies where male tend to follow more noble kind of procedures while female like to follow school taught tactics and lastly teacher's stereotypes, where the teacher perceives that male are better in maths compared to male. 
+
+# Conclusion
+
+The researcher would like to conclude that the math mean score in male is higher than in female which
+is due to various factors mentioned in recommendation. The quantitative result shows that there is
+difference in the math score and reading score in both male and female where various factors, mainly
+value priorities and nature or choice of work in each gender is regarded very important.
+
+
+
+# References
+@Halpern2006
+@Barrow2018
+@Kaggle2018
+@Todd2019
