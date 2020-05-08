@@ -25,7 +25,7 @@ The researcher believes that females are more proficient in reading condition wh
 The researcher found their data in Kaggle.com. The analysis of data was with first being approaching the data. Second analyzing categorical and numerical values. Third, finding data types, outliers and missing values. The researcher also analyzed the data and discovered various methods to find the accuracy in the results from the data. 
 
 The basic findings of the data is that the researcher’s assumption was right. Based on the gender, male score better than female in math exam while female score better in reading exam compared to that with male.
-Based on the researcher’s finding., researcher would like to recommend that ………………
+Based on the researcher’s findings, researcher would like to recommend that there have been sustancial change in the gap between male and female math score. There still lies huge gap however, it has been decreasing with time. Another interesting finding is also about the income differences that has been resulted with the gap in the math score of both male and female. There has been substancial increase in the pay of women as well. Nevertheless, we cannot eliminate the fact that the gap is still there. 
 
 # Introduction
 
